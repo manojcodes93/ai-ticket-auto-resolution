@@ -1,0 +1,11 @@
+ticket,category,solution
+reset my password,password_issue,send reset link
+forgot my password,password_issue,send reset link
+vpn not connecting,network_issue,restart vpn
+vpn connection failed,network_issue,restart vpn
+wifi not working,network_issue,restart router
+internet not working,network_issue,restart router
+install python,software_install,download python installer
+install vscode,software_install,download vscode installer
+outlook not opening,email_issue,clear outlook cache
+email not syncing,email_issue,check mail settings
