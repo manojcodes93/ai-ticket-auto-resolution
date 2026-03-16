@@ -23,8 +23,15 @@ def retrieve_solution(user_ticket):
     ## Computing the similarity
     scores = util.cos_sim(query_embedding, ticket_embeddings)
 
-    best_match = scores.argmax().item()
-    similarity = scores[0][best_match].item()
+    # getting top 3 similar tickets
+    top_k = 3
+    top_results = scores[0].topk(k=top_k)
 
-    solution = answers[best_match]
-    return solution, similarity
+    solutions = []
+    similarity_scores = []
+
+    for idx, score in zip(top_results.indices, top_results.values):
+        solutions.append(answers[idx.item()])
+        similarity_scores.append(score.item())
+
+    return solutions, similarity_scores

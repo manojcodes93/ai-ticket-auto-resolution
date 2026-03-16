@@ -15,14 +15,22 @@ def solve_ticket(ticket_text):
 
     ## Retreiving the solution
     solution, similarity_score = retrieve_solution(ticket_text)
+    best_score = similarity_score[0]
+
+    # convert to percentage
+    classifier_confidence_pct = round(classifier_confidence * 100, 2)
+    similarity_score_pct = round(best_score * 100, 2)
 
     ## Confidence decision
-    if similarity_score < 0.55:
-        solution = "Low confidence — escalate to human support"
+    if best_score < 0.55:
+        return {
+            "category": category,
+            "confidence": f"{classifier_confidence_pct}%",
+            "message": "Low confidence — escalate to human support"
+        }
     
     return {
         "category": category,
-        "classifier_confidence": float(classifier_confidence),
-        "similarity_score": similarity_score,
-        "solution": solution
+        "confidence": f"{classifier_confidence_pct}%",
+        "suggested_solutions": solution
     }
