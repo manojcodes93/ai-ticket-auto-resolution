@@ -1,12 +1,13 @@
-import pickle
+from retrieval import retrieve_solution
 
-model = pickle.load(open("model.pkl", "rb"))
-vectorizer = pickle.load(open("vectorizer.pkl", "rb"))
+ticket = "How do I bake a chocolate cake in the oven?"
 
-ticket = ["install anaconda"]
+solution, score = retrieve_solution(ticket)
 
-ticket_vector = vectorizer.transform(ticket)
+print("\nUser Ticket:")
+print(ticket)
 
-prediction = model.predict(ticket_vector)
+print("\nSuggested Solution:")
+print(solution)
 
-print("Prediction:", prediction[0])
+print("\nSimilarity Score:", score)
