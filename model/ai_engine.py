@@ -1,5 +1,6 @@
 import pickle
 from retrieval import retrieve_solution
+from llm_generator import generate_response
 
 ## Loading classifier
 model = pickle.load(open("model/model.pkl", "rb"))
@@ -28,9 +29,10 @@ def solve_ticket(ticket_text):
             "confidence": f"{classifier_confidence_pct}%",
             "message": "Low confidence — escalate to human support"
         }
-    
+
+    final_answer = generate_response(ticket_text, solution)
     return {
         "category": category,
         "confidence": f"{classifier_confidence_pct}%",
-        "suggested_solutions": solution
+        "response": final_answer
     }

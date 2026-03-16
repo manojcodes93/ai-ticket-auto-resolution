@@ -5,3 +5,5 @@ pandas
 numpy
 sentence-transformers
 sqlalchemy
+openai
+requests
