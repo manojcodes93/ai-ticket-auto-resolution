@@ -15,13 +15,13 @@ y = df["category"]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.23, random_state = 42, stratify = y)
 
 ##Converting the text into vectors
-vectorizer = TfidfVectorizer(stop_words = "english", max_features = 20000, ngram_range=(1,2), min_df=2)
+vectorizer = TfidfVectorizer(stop_words = "english", max_features = 40000, ngram_range=(1,2), min_df = 1, max_df = 0.85)
 
 X_train_vec = vectorizer.fit_transform(X_train)
 X_test_vec = vectorizer.transform(X_test)
 print("Vectorization complete")
 
-model = LogisticRegression(max_iter = 1000, class_weight="balanced")
+model = LogisticRegression(max_iter = 1000, class_weight="balanced", C = 5)
 model.fit(X_train_vec, y_train)
 print("Model training is completed")
 
