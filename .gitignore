@@ -2,6 +2,8 @@
 venv/
 .env/
 .venv/
+.myvenv/
+myvenv/
 
 # Python cache
 __pycache__/
@@ -10,3 +12,15 @@ __pycache__/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Logs
+*.log
+
+# Database files (if using SQLite locally)
+*.db
+
+# VS Code settings
+.vscode/
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
