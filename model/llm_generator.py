@@ -8,18 +8,34 @@ client = Groq(
     api_key = os.getenv("GROQ_API_KEY")
 )
 
-def generate_response(ticket, solutions):
+def generate_response(ticket, solutions, category):
     solutions_text = "\n".join([f"- {s}" for s in solutions])
 
     prompt = f"""
-You are an IT support assistant.
-User issue:
+You are a professional IT Support Engineer specializing in enterprise IT systems.
+
+Ticket Category:
+{category}
+
+User Issue:
 {ticket}
 
-Possible solutions:
+Retrieved Similar Solutions:
 {solutions_text}
 
-Give a short and clear solution (2-3 sentences).
+Your Task:
+Generate a concise and actionable resolution for the user's issue.
+
+Guidelines:
+- Use the retrieved solutions as context, but do NOT copy them verbatim
+- Provide clear technical instructions
+- Use step‑by‑step guidance if applicable
+- Keep the response concise (2–3 sentences)
+- Assume the issue is not yet resolved
+- Avoid greetings, filler text, or unnecessary explanations
+- Focus on practical resolution steps
+
+Final Resolution:
 """
     
     try:

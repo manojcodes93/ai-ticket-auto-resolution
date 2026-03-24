@@ -2,6 +2,8 @@ import pickle
 from retrieval import retrieve_solution
 from llm_generator import generate_response
 
+cache = {}
+
 # Load classifier
 model = pickle.load(open("model/model.pkl", "rb"))
 
@@ -28,22 +30,32 @@ def solve_ticket(ticket_text):
         best_solution = solutions[0]
 
         # Decide whether to call LLM
-        if classifier_confidence > 0.7:
+        if classifier_confidence > 0.75:
             # High confidence → no LLM
             return {
                 "category": category,
-                "confidence": f"{round(classifier_confidence * 100, 2)}%",
                 "response": best_solution
             }
 
         # Use Hugging Face LLM (fallback)
-        llm_response = generate_response(ticket_text, solutions)
+        elif classifier_confidence > 0.40:
+            normalized_ticket = ticket_text.lower().strip()
+            if normalized_ticket in cache:
+                llm_response = cache[normalized_ticket]
+            else:
+                llm_response = generate_response(ticket_text, solutions, category)
+                cache[normalized_ticket] = llm_response
 
-        return {
-            "category": category,
-            "confidence": f"{round(classifier_confidence * 100, 2)}%",
-            "response": llm_response
-        }
+            return {
+                "category": category,
+                "response": llm_response
+                }
+        
+        else:
+            return {
+                "category": category,
+                "response": "The issue requires further investigation. Please contact IT support for assistance."
+                }
 
     except Exception as e:
         return {
