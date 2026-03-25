@@ -153,10 +153,18 @@ final_df = df[[
 ]]
 
 
+rare_threshold = 50
+
+rare_categories = final_df["category_final"].value_counts()
+rare_categories = rare_categories[rare_categories < rare_threshold].index
+
+final_df["category_final"] = final_df["category_final"].replace(
+    rare_categories, "other_issue"
+)
 
 print("\nBalancing dataset...")
 
-min_samples = final_df["category_final"].value_counts().min()
+min_samples = 500
 
 
 balanced_df = (
