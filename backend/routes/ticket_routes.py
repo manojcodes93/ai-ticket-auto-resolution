@@ -6,6 +6,7 @@ from backend.schemas import TicketCreateSchema
 from model.ai_engine import solve_ticket
 import random
 import string
+from backend.dependencies import get_current_user
 
 router = APIRouter(prefix="/tickets", tags=["Tickets"])
 
@@ -24,8 +25,11 @@ def decide_status(confidence):
 
 
 @router.post("/create")
-def create_ticket(data: TicketCreateSchema, db: Session = Depends(get_db)):
-
+def create_ticket(
+    data: TicketCreateSchema,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
     try:
         ticket_number = generate_ticket_number()
 
@@ -53,7 +57,8 @@ def create_ticket(data: TicketCreateSchema, db: Session = Depends(get_db)):
             description=data.description,
             category=str(category),
             response=str(response),
-            status=status
+            status=status,
+            user_id=current_user.id
         )
 
         db.add(new_ticket)
@@ -61,6 +66,7 @@ def create_ticket(data: TicketCreateSchema, db: Session = Depends(get_db)):
         db.refresh(new_ticket)
 
         return {
+            "title": data.title,
             "ticket_number": ticket_number,
             "category": category,
             "response": response
@@ -73,23 +79,79 @@ def create_ticket(data: TicketCreateSchema, db: Session = Depends(get_db)):
 @router.get("")
 def get_tickets(
     status: str = Query(None),
+    current_user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    if current_user.role != "ADMIN":
+        return {"error": "Access denied. Admins only."}
+
     query = db.query(Ticket)
 
     if status:
         query = query.filter(Ticket.status == status)
 
-    return query.all()
+    tickets = query.all()
+
+    return [
+        {
+            "ticket_number": t.ticket_number,
+            "title": t.title,
+            "category": t.category,
+            "status": t.status
+        }
+        for t in tickets
+    ]
+
+
+
+@router.get("/my")
+def get_my_tickets(
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    tickets = db.query(Ticket).filter(Ticket.user_id == current_user.id).all()
+
+    return [
+        {
+            "ticket_number": t.ticket_number,
+            "title": t.title,
+            "category": t.category,
+            "status": t.status
+        }
+        for t in tickets
+    ]
 
 
 @router.get("/{ticket_number}")
-def get_ticket(ticket_number: str, db: Session = Depends(get_db)):
-    return db.query(Ticket).filter(Ticket.ticket_number == ticket_number).first()
+def get_ticket(
+    ticket_number: str,
+    db: Session = Depends(get_db)
+):
+    t = db.query(Ticket).filter(Ticket.ticket_number == ticket_number).first()
+
+    if not t:
+        return {"error": "Ticket not found"}
+
+    return {
+        "ticket_number": t.ticket_number,
+        "title": t.title,
+        "description": t.description,
+        "category": t.category,
+        "response": t.response,
+        "status": t.status
+    }
 
 
 @router.patch("/{ticket_number}")
-def update_ticket(ticket_number: str, response: str, status: str, db: Session = Depends(get_db)):
+def update_ticket(
+    ticket_number: str,
+    response: str,
+    status: str,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    if current_user.role != "ADMIN":
+        return {"error": "Access denied. Admins only."}
 
     ticket = db.query(Ticket).filter(Ticket.ticket_number == ticket_number).first()
 
