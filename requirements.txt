@@ -1,10 +1,12 @@
 fastapi
 uvicorn
+sqlalchemy
+psycopg2-binary
+pydantic
+python-dotenv
 scikit-learn
 pandas
 numpy
 sentence-transformers
-sqlalchemy
-openai
-requests
 pyspellchecker
+requests
