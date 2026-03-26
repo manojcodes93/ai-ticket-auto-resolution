@@ -1,27 +1,25 @@
 from fastapi import FastAPI
+from sqlalchemy import text
 import sys
 import os
-from sqlalchemy import text
 
-# ✅ Add root path (to access model folder)
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# ✅ Import AI + DB
-from model.ai_engine import solve_ticket
-from database import SessionLocal
+from backend.database import engine, Base, SessionLocal
+from backend import models
+from backend.routes import auth_routes, ticket_routes
 
 app = FastAPI()
 
-# ---------------------------
-# Basic test route
-# ---------------------------
+Base.metadata.create_all(bind=engine)
+
+app.include_router(auth_routes.router)
+app.include_router(ticket_routes.router)
+
 @app.get("/")
 def home():
     return {"message": "Backend is running"}
 
-# ---------------------------
-# DB connection test
-# ---------------------------
 @app.get("/test_db")
 def test_db():
     try:
@@ -30,11 +28,3 @@ def test_db():
         return {"message": "Database connected successfully"}
     except Exception as e:
         return {"error": str(e)}
-
-# ---------------------------
-# AI prediction API
-# ---------------------------
-@app.post("/predict_ticket")
-def predict_ticket(ticket: str):
-    result = solve_ticket(ticket)
-    return result

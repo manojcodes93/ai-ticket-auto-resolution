@@ -1,5 +1,5 @@
 import pickle
-from retrieval import retrieve_solution
+from model.retrieval import retrieve_solution
 from spellchecker import SpellChecker
 
 # Load classifier
