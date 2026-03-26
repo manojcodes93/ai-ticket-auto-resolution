@@ -16,7 +16,7 @@ def login(data: LoginSchema, db: Session = Depends(get_db)):
         return {"error": "Invalid credentials"}
 
     return {
-        "id": user.id,
-        "name": user.name,
-        "role": user.role
-    }
+    "user_id": user.id,
+    "name": user.name,
+    "role": user.role
+     }
