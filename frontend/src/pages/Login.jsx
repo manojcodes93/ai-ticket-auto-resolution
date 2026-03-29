@@ -7,7 +7,7 @@ export default function Login({ setUser }) {
 
   const handleLogin = async () => {
     if (!username || !password) {
-      alert("Enter username and password");
+      alert("Enter email and password");
       return;
     }
 
@@ -20,10 +20,9 @@ export default function Login({ setUser }) {
       console.log("LOGIN RESPONSE:", res.data);
 
       localStorage.setItem("token", res.data.access_token);
-
       setUser(res.data.user);
     } catch (err) {
-      console.log(err.response?.data);
+      console.log("ERROR:", err.response?.data);
       alert("Login failed");
     }
   };
@@ -40,21 +39,29 @@ export default function Login({ setUser }) {
     >
       <div
         style={{
-          background: "#1f2933",
+          background: "#1e293b",
           padding: "30px",
-          borderRadius: "10px",
-          width: "300px",
+          borderRadius: "12px",
+          width: "320px",
           textAlign: "center",
-          color: "#e5e7eb",
+          color: "white",
         }}
       >
-        <h2>AI Ticket Resolution</h2>
+        <h2 style={{ marginBottom: "20px" }}>AI Ticket System</h2>
 
         <input
-          placeholder="Enter username"
+          placeholder="Enter email"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          style={{ width: "100%", padding: "10px", margin: "10px 0" }}
+          style={{
+            width: "100%",
+            padding: "12px",
+            margin: "10px 0",
+            borderRadius: "8px",
+            border: "none",
+            outline: "none",
+            boxSizing: "border-box",
+          }}
         />
 
         <input
@@ -62,12 +69,30 @@ export default function Login({ setUser }) {
           placeholder="Enter password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          style={{ width: "100%", padding: "10px", margin: "10px 0" }}
+          style={{
+            width: "100%",
+            padding: "12px",
+            margin: "10px 0",
+            borderRadius: "8px",
+            border: "none",
+            outline: "none",
+            boxSizing: "border-box",
+          }}
         />
 
         <button
           onClick={handleLogin}
-          style={{ width: "100%", padding: "10px" }}
+          style={{
+            width: "100%",
+            padding: "12px",
+            marginTop: "10px",
+            borderRadius: "8px",
+            border: "none",
+            background: "#3b82f6",
+            color: "white",
+            cursor: "pointer",
+            boxSizing: "border-box",
+          }}
         >
           Login
         </button>
