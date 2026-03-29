@@ -1,16 +1,29 @@
-from fastapi import Header, HTTPException, Depends
-from sqlalchemy.orm import Session
-from backend.database import get_db
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+import jwt
+from backend.database import SessionLocal
 from backend.models import User
 
+SECRET_KEY = "your_secret_key"
+ALGORITHM = "HS256"
 
-def get_current_user(
-    user_id: int = Header(...),
-    db: Session = Depends(get_db)
-):
-    user = db.query(User).filter(User.id == user_id).first()
+security = HTTPBearer()
 
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid user")
+def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    token = credentials.credentials
 
-    return user
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email = payload.get("sub")
+
+        db = SessionLocal()
+        user = db.query(User).filter(User.email == email).first()
+        db.close()
+
+        if not user:
+            raise HTTPException(status_code=401, detail="User not found")
+
+        return user
+
+    except:
+        raise HTTPException(status_code=401, detail="Invalid token")

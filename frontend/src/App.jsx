@@ -6,6 +6,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 function App() {
   const [user, setUser] = useState(null);
 
+  if (!user || !user.role) return <Login setUser={setUser} />;
+
   if (!user) return <Login setUser={setUser} />;
 
   if (user.role === "ADMIN") {
