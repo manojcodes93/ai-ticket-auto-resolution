@@ -37,11 +37,22 @@ export default function AdminDashboard({ user }) {
           marginBottom: "20px",
         }}
       >
-        <h1>Admin Dashboard</h1>
+        <h1>Dashboard</h1>
         <button
           onClick={() => {
             localStorage.removeItem("token");
             window.location.reload();
+          }}
+          style={{
+            padding: "8px 18px",
+            borderRadius: "8px",
+            border: "none",
+            background: "#ef4444",
+            color: "white",
+            cursor: "pointer",
+            fontSize: "14px",
+            fontWeight: "500",
+            height: "36px",
           }}
         >
           Logout
