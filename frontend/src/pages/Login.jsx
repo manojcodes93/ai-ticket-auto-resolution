@@ -13,11 +13,15 @@ export default function Login({ setUser }) {
 
     try {
       const res = await API.post("/login", {
-        username: username,
-        password: password,
+        username,
+        password,
       });
 
-      setUser(res.data);
+      console.log("LOGIN RESPONSE:", res.data);
+
+      localStorage.setItem("token", res.data.access_token);
+
+      setUser(res.data.user);
     } catch (err) {
       console.log(err.response?.data);
       alert("Login failed");
@@ -25,66 +29,49 @@ export default function Login({ setUser }) {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
+    <div
+      style={{
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        background: "#0f172a",
+      }}
+    >
+      <div
+        style={{
+          background: "#1f2933",
+          padding: "30px",
+          borderRadius: "10px",
+          width: "300px",
+          textAlign: "center",
+          color: "#e5e7eb",
+        }}
+      >
         <h2>AI Ticket Resolution</h2>
-        <p style={{ color: "#9ca3af" }}>Login to continue</p>
 
         <input
-          style={styles.input}
           placeholder="Enter username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          style={{ width: "100%", padding: "10px", margin: "10px 0" }}
         />
 
         <input
-          style={styles.input}
           type="password"
           placeholder="Enter password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          style={{ width: "100%", padding: "10px", margin: "10px 0" }}
         />
 
-        <button style={styles.button} onClick={handleLogin}>
+        <button
+          onClick={handleLogin}
+          style={{ width: "100%", padding: "10px" }}
+        >
           Login
         </button>
       </div>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    height: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    background: "#0f172a",
-  },
-  card: {
-    background: "#1f2933",
-    padding: "30px",
-    borderRadius: "10px",
-    width: "300px",
-    textAlign: "center",
-    color: "#e5e7eb",
-  },
-  input: {
-    width: "100%",
-    padding: "10px",
-    margin: "10px 0",
-    borderRadius: "6px",
-    border: "1px solid #374151",
-    background: "#111827",
-    color: "#fff",
-  },
-  button: {
-    width: "100%",
-    padding: "10px",
-    background: "#3b82f6",
-    border: "none",
-    borderRadius: "6px",
-    color: "#fff",
-    cursor: "pointer",
-  },
-};
